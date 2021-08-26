@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="BIG5">
+<title>Insert title here</title>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=7K7evzy2XPy9X-4gcgEcBMdWY927ybHKj2QSGJj8ms758J6A8C2NVbsKMy4Wb33Wxc5LGaDFnTZTlOz-N1dhju4y2bgLSN24BDontMI-bU_dB32Jh_AqTkgN2Nmrb90A8YjmIW7CAozDWbYY7HOlG-UqxF4lZ4eIUoKdpqZHMHKMrBjJV-bGLZyW5eitEiZUBx3yTUGpyIpAZTg0MrDbNeqi-a3G4bSRzoLQ0I71Ge5HhCt703H5Dwg3x-2-Nn0vvXiyDBBxfRMUkpC6Oy0DW6B0foW-Sau5tSm8knzIeI6JsmNztSwiKXCxokXw3zDKK9IKSL5UJlI27miqPrPNAErYuJ-m75tVuv0cEITLrxzVOzVtAMvyHeoz4M5KkJNz8pAGDayuRBeVj0mmv8_e8ctkVGmLpxEmb1-TNPz3RJ6DVQoOMQyKdcjN-kYN2GbuYFBPfpEjE9-QBCUNa8dIDw" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9kb2MtMDAtN28tZG9jcy5nb29nbGV1c2VyY29udGVudC5jb20vZG9jcy9zZWN1cmVzYy8wa29uMDhicTdtNjE0dnRsdWlzMWoxdXY2OGVxNnRoOC9kYWpscHNlbHZnajQxc2phY2Y0MWwyYTNpY2R0MjQ2by8xNjI5OTAyNDAwMDAwLzE2MjUzODk4MzcwMTYyMTQyNjQxLzE4Mzc1MDIxNjI3OTM3MTIxMzExLzFjNU1yOEphTVJidzRKakhjNWVkSVRMUVhOZDRTVDFOYz9lPWRvd25sb2FkJmF1dGh1c2VyPTAmbm9uY2U9bDNxOXJpbTM5a2Y5aSZ1c2VyPTE4Mzc1MDIxNjI3OTM3MTIxMzExJmhhc2g9M2J2aG83OGNrdmVpcDlla2g1OHVmNGJrY3IwcWZzM2E"/>
+</head>
+
+<body>  
+    <div id = "app">
+    <h2>即時匯率轉換器</h2>
+    幣別：
+    <select name="currency">
+      <option value="USD">美金</option>
+      <option value="TWD">台幣</option>
+      <option value="JPY">日幣</option>
+    </select>
+    金額：<input v-model="price"  type="number" step="0.01" name="price"/> - 折扣： <input type="number" step="0.01" name="discount" v-model="discount" /> = 台幣結果： {{result}}
+    <br/>
+    <br/>
+    <button v-on:click="calculate()">計算</button>
+    <ul>
+      <li style="color:red">注意：幣別為美金或日幣時，折扣功能無效.</li>
+      <li style="color:red">注意：幣別為台幣時，需有折扣功能.</li>
+    </ul>
+    </div>
+	
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+            price: 0.0,
+            discount: 0.0,
+            currency: "",
+            result: 0.0,
+        },
+        methods: {
+            calculate: async function() {
+              let that = this;
+              var myHeaders = new Headers();
+              myHeaders.append("Content-Type", "application/json");
+
+              var raw = JSON.stringify({
+                "price": parseFloat(that.price),
+                "discount": parseFloat(that.discount),
+                "currency": that.currency
+            });
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+            
+            fetch("https://www.myurl.com:8080/calculate", requestOptions)
+              .then(response => response.text())
+              .then(function(resp){
+                let res = JSON.parse(resp)
+                that.result = res.result_price;
+              })
+          },      
+        }
+      })
+    </script>
+  </body>
+</html>
